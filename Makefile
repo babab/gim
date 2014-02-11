@@ -7,5 +7,7 @@ make:
 
 install:
 	install -Dm 755 gim ${BIN_PATH}
+	ln -sf ${BIN_PATH}/gim ${BIN_PATH}/git-edit
 uninstall:
 	rm -f $(BIN_PATH)/gim
+	rm -f $(BIN_PATH)/git-edit

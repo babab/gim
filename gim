@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
+# Create Vim sessions with automatic pane/tab layouts from git-status
 
 # Copyright (c) 2013  Benjamin Althues <benjamin@babab.nl>
 #

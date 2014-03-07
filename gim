@@ -152,9 +152,12 @@ class Gim(pycommand.CommandBase):
         return ret + files
 
 if __name__ == '__main__':
-    cmd = Gim(sys.argv[1:])
-    if cmd.error:
-        print('error: {0}'.format(cmd.error))
+    try:
+        cmd = Gim(sys.argv[1:])
+        if cmd.error:
+            print('error: {0}'.format(cmd.error))
+            sys.exit(1)
+        else:
+            sys.exit(cmd.run())
+    except (KeyboardInterrupt, EOFError):
         sys.exit(1)
-    else:
-        sys.exit(cmd.run())

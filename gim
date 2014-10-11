@@ -26,7 +26,7 @@ import sys
 
 
 class Gim(pycommand.CommandBase):
-    '''Create Vim sessions with automatic pane/tab layouts from git-status'''
+    '''Edit files by picking them from git-status or git-ls-files output'''
 
     usagestr = 'usage: {0} [options]'.format(os.path.basename(sys.argv[0]))
     description = __doc__
@@ -85,8 +85,7 @@ class Gim(pycommand.CommandBase):
 
             inp = input('\nSelect files to edit [{0}]: '
                         .format(red(git_status[0][3])))
-            if not inp:
-                inp = '1'
+            inp = inp or '1'
 
             files = []
             for i in inp.split():
@@ -131,14 +130,11 @@ class Gim(pycommand.CommandBase):
         return ret
 
     def vimargs(self, files):
-        VIM_EXEC = 'vim'
-        if self.flags['vim']:
-            VIM_EXEC = self.flags['vim']
-        n = len(files)
+        VIM_EXEC = self.flags['vim'] or 'vim'
 
-        if n == 1:
+        if len(files) == 1:
             ret = [VIM_EXEC]
-        elif n == 2:
+        elif len(files) == 2:
             cols = int(subprocess.check_output(['tput', 'cols'])
                        .decode('ascii', errors='strict'))
             if cols < 80:

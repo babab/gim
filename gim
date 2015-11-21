@@ -44,14 +44,17 @@ class Gim(pycommand.CommandBase):
     def run(self):
         if self.flags['help']:
             print(self.usage)
-            return
+            return 0
         elif self.flags['version']:
             print('Gim version: {0} / Python version: {1} '
                   .format(self.version, sys.version.split()[0]))
-            return
+            return 0
 
         if self.flags['indexed']:
-            git_ls = self.ls_files()
+            try:
+                git_ls = self.ls_files()
+            except subprocess.CalledProcessError as e:
+                return 2
 
             if not git_ls:
                 return 0
@@ -73,7 +76,10 @@ class Gim(pycommand.CommandBase):
                 except (IndexError, ValueError):
                     pass
         else:
-            git_status = self.statuslist()
+            try:
+                git_status = self.statuslist()
+            except subprocess.CalledProcessError as e:
+                return 2
 
             if not git_status:
                 return 0

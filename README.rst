@@ -18,13 +18,13 @@ usage
 
    usage: gim [options]
 
-   Create Vim sessions with automatic pane/tab layouts from git-status
+   Edit files by picking them from git-status or git-ls-files output
 
    Options:
    -h, --help              show this help information
-   -s, --staged            Include staged files [default]
-   -u, --unstaged          Include unstaged files
    -i, --indexed           Show indexed files only (git ls-files)
+   -s, --staged            Do not include unstaged files
+   -u, --unstaged          Include unstaged files [default]
    --vim=<vim executable>  Use an executable other then `vim`
    --version               show version information
 
@@ -41,7 +41,7 @@ Be sure to also install pycommand and optionally ansicolors.
 dependencies
 ------------
 
-- Python 3.3.x (lower versions may work but are not tested)
+- Python 3.5.x (lower versions may work but are not tested a.t.m)
 - pycommand (needed) -- https://pypi.python.org/pypi/pycommand
 - ansicolors (optional) -- https://pypi.python.org/pypi/ansicolors
 
@@ -55,7 +55,7 @@ I have yet to write a setup.py script. Meanwhile you can just::
 license
 =======
 
-Copyright (c) 2013-2014 Benjamin Althues <benjamin@babab.nl>
+Copyright (c) 2013-2015 Benjamin Althues <benjamin@babab.nl>
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

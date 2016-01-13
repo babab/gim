@@ -55,7 +55,7 @@ I have yet to write a setup.py script. Meanwhile you can just::
 license
 =======
 
-Copyright (c) 2013-2015 Benjamin Althues <benjamin@babab.nl>
+Copyright (c) 2013-2016 Benjamin Althues <benjamin@babab.nl>
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

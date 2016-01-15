@@ -151,7 +151,9 @@ class Gim(pycommand.CommandBase):
                 ret = [VIM_EXEC, '-O']
         else:
             ret = [VIM_EXEC, '-p']
-        return ret + files
+        args = ret + files
+        print(green(' '.join(args)))
+        return args
 
 if __name__ == '__main__':
     try:

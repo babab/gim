@@ -35,6 +35,7 @@ class Gim(pycommand.CommandBase):
         ('staged', ('s', False, 'Do not include unstaged files')),
         ('unstaged', ('u', False, 'Include unstaged files [default]')),
         ('indexed', ('i', False, 'Show indexed files only (git ls-files)')),
+        ('diff', ('d', False, 'Open selected files with vimdiff')),
         ('vim', ('', '<vim executable>',
                  'Use an executable other then `vim`')),
         ('version', ('', False, 'show version information')),
@@ -136,21 +137,24 @@ class Gim(pycommand.CommandBase):
         return ret
 
     def vimargs(self, files):
-        VIM_EXEC = self.flags['vim'] or 'vim'
+        VIM_EXEC = self.flags.vim or 'vim'
 
-        if len(files) == 1:
-            ret = [VIM_EXEC]
-        elif len(files) == 2:
-            cols = int(subprocess.check_output(['tput', 'cols'])
-                       .decode('ascii', errors='strict'))
-            if cols < 80:
-                ret = [VIM_EXEC, '-p']
-            elif cols < 191:
-                ret = [VIM_EXEC, '-o']
-            else:
-                ret = [VIM_EXEC, '-O']
+        if self.flags.diff:
+            ret = ['vimdiff']
         else:
-            ret = [VIM_EXEC, '-p']
+            if len(files) == 1:
+                ret = [VIM_EXEC]
+            elif len(files) == 2:
+                cols = int(subprocess.check_output(['tput', 'cols'])
+                           .decode('ascii', errors='strict'))
+                if cols < 80:
+                    ret = [VIM_EXEC, '-p']
+                elif cols < 191:
+                    ret = [VIM_EXEC, '-o']
+                else:
+                    ret = [VIM_EXEC, '-O']
+            else:
+                ret = [VIM_EXEC, '-p']
         args = ret + files
         print(green(' '.join(args)))
         return args

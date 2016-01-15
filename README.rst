@@ -22,9 +22,10 @@ usage
 
    Options:
    -h, --help              show this help information
-   -i, --indexed           Show indexed files only (git ls-files)
    -s, --staged            Do not include unstaged files
    -u, --unstaged          Include unstaged files [default]
+   -i, --indexed           Show indexed files only (git ls-files)
+   -d, --diff              Open selected files with vimdiff
    --vim=<vim executable>  Use an executable other then `vim`
    --version               show version information
 

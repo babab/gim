@@ -42,6 +42,9 @@ class Gim:
             if 'M' in i[:2] or 'A' in i[:2]:
                 n += 1
                 ret.append((n, green(i[0]), red(i[1]), i[3:]))
+            elif 'UU' in i[:2]:
+                n += 1
+                ret.append((n, red(i[0]), red(i[1]), i[3:]))
             elif 'R' in i[:2]:
                 n += 1
                 ret.append((n, green('R'), red(i[1]), i[3:].split()[2]))

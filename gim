@@ -24,89 +24,13 @@ import pycommand
 import subprocess
 import sys
 
+__version__ = '0.1.0'
 
-class Gim(pycommand.CommandBase):
-    '''Edit files by picking them from git-status or git-ls-files output'''
 
-    usagestr = 'usage: {0} [options]'.format(os.path.basename(sys.argv[0]))
-    description = __doc__
-    optionList = (
-        ('help', ('h', False, 'show this help information')),
-        ('staged', ('s', False, 'Do not include unstaged files')),
-        ('unstaged', ('u', False, 'Include unstaged files [default]')),
-        ('indexed', ('i', False, 'Show indexed files only (git ls-files)')),
-        ('diff', ('d', False, 'Open selected files with vimdiff')),
-        ('vim', ('', '<vim executable>',
-                 'Use an executable other then `vim`')),
-        ('version', ('', False, 'show version information')),
-    )
-    version = '0.1.0'
-
-    def run(self):
-        if self.flags['help']:
-            print(self.usage)
-            return 0
-        elif self.flags['version']:
-            print('Gim version: {0} / Python version: {1} '
-                  .format(self.version, sys.version.split()[0]))
-            return 0
-
-        if self.flags['indexed']:
-            try:
-                git_ls = self.ls_files()
-            except subprocess.CalledProcessError as e:
-                return 2
-
-            if not git_ls:
-                return 0
-
-            padding = 2 if len(git_ls) > 9 else 1
-            for i in git_ls:
-                print('{0:{p}} {1}'
-                      .format(i[0], i[1], p=padding))
-
-            inp = input('\nSelect files to edit [{0}]: '
-                        .format(green(git_ls[0][1])))
-            if not inp:
-                inp = '1'
-
-            files = []
-            for i in inp.split():
-                try:
-                    files.append(git_ls[int(i) - 1][1])
-                except (IndexError, ValueError):
-                    pass
-        else:
-            try:
-                git_status = self.statuslist()
-            except subprocess.CalledProcessError as e:
-                return 2
-
-            if not git_status:
-                return 0
-
-            padding = 2 if len(git_status) > 9 else 1
-            for i in git_status:
-                print('{0:{p}} {1}{2} {3}'
-                      .format(i[0], i[1], i[2], i[3], p=padding))
-
-            inp = input('\nSelect files to edit [{0}]: '
-                        .format(red(git_status[0][3])))
-            inp = inp or '1'
-
-            files = []
-            for i in inp.split():
-                try:
-                    files.append(git_status[int(i) - 1][3])
-                except (IndexError, ValueError):
-                    pass
-
-        if files:
-            try:
-                subprocess.call(self.vimargs(files))
-            except IOError as e:
-                print(e)
-                return e.errno
+class Gim:
+    def __init__(self, flags, vim_executable='vim'):
+        self.flags = flags
+        self.vim_executable = vim_executable
 
     def statuslist(self):
         ls = subprocess.check_output(['git', 'status', '--short']) \
@@ -137,35 +61,113 @@ class Gim(pycommand.CommandBase):
         return ret
 
     def vimargs(self, files):
-        VIM_EXEC = self.flags.vim or 'vim'
-
         if self.flags.diff:
             ret = ['vimdiff']
         else:
             if len(files) == 1:
-                ret = [VIM_EXEC]
+                ret = [self.vim_executable]
             elif len(files) == 2:
                 cols = int(subprocess.check_output(['tput', 'cols'])
                            .decode('ascii', errors='strict'))
                 if cols < 80:
-                    ret = [VIM_EXEC, '-p']
+                    ret = [self.vim_executable, '-p']
                 elif cols < 191:
-                    ret = [VIM_EXEC, '-o']
+                    ret = [self.vim_executable, '-o']
                 else:
-                    ret = [VIM_EXEC, '-O']
+                    ret = [self.vim_executable, '-O']
             else:
-                ret = [VIM_EXEC, '-p']
+                ret = [self.vim_executable, '-p']
         args = ret + files
         print(green(' '.join(args)))
         return args
 
+
+class ShellCommand(pycommand.CommandBase):
+    '''Select files to be edited in Vim from Git repository data'''
+
+    usagestr = 'usage: {0} [options]'.format(os.path.basename(sys.argv[0]))
+    description = __doc__
+    optionList = (
+        ('help', ('h', False, 'show this help information')),
+        ('staged', ('s', False, 'Do not include unstaged files')),
+        ('unstaged', ('u', False, 'Include unstaged files [default]')),
+        ('indexed', ('i', False, 'Show indexed files only (git ls-files)')),
+        ('diff', ('d', False, 'Open selected files with vimdiff')),
+        ('vim', ('', '<vim executable>',
+                 'Use an executable other then `vim`')),
+        ('version', ('', False, 'show version information')),
+    )
+
+    def run(self):
+        if self.flags['help']:
+            print(self.usage)
+            return 0
+        elif self.flags['version']:
+            print('Gim version: {0} / Python version: {1} '
+                  .format(__version__, sys.version.split()[0]))
+            return 0
+
+        self.gim = Gim(self.flags, self.flags.vim or 'vim')
+
+        if self.flags['indexed']:
+            try:
+                git_ls = self.gim.ls_files()
+            except subprocess.CalledProcessError as e:
+                return 2
+
+            if not git_ls:
+                return 0
+
+            padding = 2 if len(git_ls) > 9 else 1
+            for i in git_ls:
+                print('{0:{p}} {1}'
+                      .format(i[0], i[1], p=padding))
+
+            inp = input('\nSelect files to edit [{0}]: '
+                        .format(green(git_ls[0][1])))
+            if not inp:
+                inp = '1'
+
+            files = []
+            for i in inp.split():
+                try:
+                    files.append(git_ls[int(i) - 1][1])
+                except (IndexError, ValueError):
+                    pass
+        else:
+            try:
+                git_status = self.gim.statuslist()
+            except subprocess.CalledProcessError as e:
+                return 2
+
+            if not git_status:
+                return 0
+
+            padding = 2 if len(git_status) > 9 else 1
+            for i in git_status:
+                print('{0:{p}} {1}{2} {3}'
+                      .format(i[0], i[1], i[2], i[3], p=padding))
+
+            inp = input('\nSelect files to edit [{0}]: '
+                        .format(red(git_status[0][3])))
+            inp = inp or '1'
+
+            files = []
+            for i in inp.split():
+                try:
+                    files.append(git_status[int(i) - 1][3])
+                except (IndexError, ValueError):
+                    pass
+
+        if files:
+            try:
+                subprocess.call(self.gim.vimargs(files))
+            except IOError as e:
+                print(e)
+                return e.errno
+
 if __name__ == '__main__':
     try:
-        cmd = Gim(sys.argv[1:])
-        if cmd.error:
-            print('error: {0}'.format(cmd.error))
-            sys.exit(1)
-        else:
-            sys.exit(cmd.run())
+        pycommand.run_and_exit(ShellCommand)
     except (KeyboardInterrupt, EOFError):
         sys.exit(1)

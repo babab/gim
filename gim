@@ -112,6 +112,9 @@ class ShellCommand(pycommand.CommandBase):
 
         self.gim = Gim(self.flags, self.flags.vim or 'vim')
 
+        print('Gim version {version}, run "gim --help" for more information'
+              .format(version=__version__))
+
         if self.flags['indexed']:
             try:
                 git_ls = self.gim.ls_files()

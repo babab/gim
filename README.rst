@@ -11,11 +11,10 @@ files will be shown in a horizontal splitted window.
 
 When >2 files are selected, all files will be opened as vim tabs.
 
-.. raw:: html
+.. image:: https://asciinema.org/a/e3hkjfe2pwna5timt14buxtwh.png
+   :target: https://asciinema.org/a/e3hkjfe2pwna5timt14buxtwh
+   :width: 640px
 
-   <script type="text/javascript"
-           src="https://asciinema.org/a/e3hkjfe2pwna5timt14buxtwh.js"
-           id="asciicast-e3hkjfe2pwna5timt14buxtwh" async></script>
 
 usage
 =====

@@ -23,13 +23,14 @@ usage
 
    usage: gim [options]
 
-   Edit files by picking them from git-status or git-ls-files output
+   Select files to be edited in Vim from Git repository data
 
    Options:
    -h, --help              show this help information
    -s, --staged            Do not include unstaged files
    -u, --unstaged          Include unstaged files [default]
    -i, --indexed           Show indexed files only (git ls-files)
+   -1, --last              Show files of last commit
    -d, --diff              Open selected files with vimdiff
    --vim=<vim executable>  Use an executable other then `vim`
    --version               show version information

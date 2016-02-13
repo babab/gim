@@ -14,15 +14,16 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+import os.path
+import subprocess
+import sys
+
+import pycommand
+
 try:
     from colors import green, red
 except ImportError:
     green = red = lambda x: x
-
-import os.path
-import pycommand
-import subprocess
-import sys
 
 __version__ = '0.1.0'
 
@@ -63,6 +64,17 @@ class Gim:
             ret.append((n, i))
         return ret
 
+    def last_commit(self):
+        files = subprocess.check_output(
+            ['git', 'show', '--format=', '--name-only']
+        ).decode('UTF-8', errors='strict').split('\n')[:-1]
+        ret = []
+        n = 0
+        for i in files:
+            n += 1
+            ret.append((n, i))
+        return ret
+
     def vimargs(self, files):
         if self.flags.diff:
             ret = ['vimdiff']
@@ -95,6 +107,7 @@ class ShellCommand(pycommand.CommandBase):
         ('staged', ('s', False, 'Do not include unstaged files')),
         ('unstaged', ('u', False, 'Include unstaged files [default]')),
         ('indexed', ('i', False, 'Show indexed files only (git ls-files)')),
+        ('last', ('1', False, 'Show files of last commit')),
         ('diff', ('d', False, 'Open selected files with vimdiff')),
         ('vim', ('', '<vim executable>',
                  'Use an executable other then `vim`')),
@@ -115,29 +128,32 @@ class ShellCommand(pycommand.CommandBase):
         print('Gim version {version}, run "gim --help" for more information'
               .format(version=__version__))
 
-        if self.flags['indexed']:
+        if self.flags.indexed or self.flags.last:
             try:
-                git_ls = self.gim.ls_files()
+                if self.flags.indexed:
+                    gimFiles = self.gim.ls_files()
+                elif self.flags.last:
+                    gimFiles = self.gim.last_commit()
             except subprocess.CalledProcessError as e:
                 return 2
 
-            if not git_ls:
+            if not gimFiles:
                 return 0
 
-            padding = 2 if len(git_ls) > 9 else 1
-            for i in git_ls:
+            padding = 2 if len(gimFiles) > 9 else 1
+            for i in gimFiles:
                 print('{0:{p}} {1}'
                       .format(i[0], i[1], p=padding))
 
             inp = input('\nSelect files to edit [{0}]: '
-                        .format(green(git_ls[0][1])))
+                        .format(green(gimFiles[0][1])))
             if not inp:
                 inp = '1'
 
             files = []
             for i in inp.split():
                 try:
-                    files.append(git_ls[int(i) - 1][1])
+                    files.append(gimFiles[int(i) - 1][1])
                 except (IndexError, ValueError):
                     pass
         else:

@@ -76,22 +76,23 @@ class Gim:
         return ret
 
     def vimargs(self, files):
-        if self.flags.diff:
-            ret = ['vimdiff']
-        else:
-            if len(files) == 1:
-                ret = [self.vim_executable]
-            elif len(files) == 2:
-                cols = int(subprocess.check_output(['tput', 'cols'])
-                           .decode('ascii', errors='strict'))
-                if cols < 80:
-                    ret = [self.vim_executable, '-p']
-                elif cols < 191:
-                    ret = [self.vim_executable, '-o']
-                else:
-                    ret = [self.vim_executable, '-O']
-            else:
-                ret = [self.vim_executable, '-p']
+        ret = ['emacsclient', '-n', '-a', 'vim', '-c']
+#        if self.flags.diff:
+#            ret = ['vimdiff']
+#        else:
+#            if len(files) == 1:
+#                ret = [self.vim_executable]
+#            elif len(files) == 2:
+#                cols = int(subprocess.check_output(['tput', 'cols'])
+#                           .decode('ascii', errors='strict'))
+#                if cols < 80:
+#                    ret = [self.vim_executable, '-p']
+#                elif cols < 191:
+#                    ret = [self.vim_executable, '-o']
+#                else:
+#                    ret = [self.vim_executable, '-O']
+#            else:
+#                ret = [self.vim_executable, '-p']
         args = ret + files
         print(green(' '.join(args)))
         return args

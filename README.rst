@@ -1,15 +1,25 @@
 gim
 ==============================================================================
 
-gim is a simple command line tool for quickly creating Vim editing
-sessions by choosing files from a selection menu gathered from the
-output of the git ``status`` or ``ls-files`` subcommands.
+gim is a simple command line tool for quickly creating Vim or Emacs
+editing sessions by choosing files from a selection menu gathered from
+the output of the git ``status`` or ``ls-files`` subcommands.
+
+Vim mode (default)
+------------------
 
 When 2 files are selected it will fetch your terminal width and create a
 vertical split window when > 161 characters are available. Otherwise the
 files will be shown in a horizontal splitted window.
 
 When >2 files are selected, all files will be opened as vim tabs.
+
+Emacs mode (-e or --emacs)
+--------------------------
+
+If -e or --emacs argument is given, each file will be opened in a new
+Emacs frame with emacsclient.
+
 
 .. image:: https://asciinema.org/a/e3hkjfe2pwna5timt14buxtwh.png
    :target: https://asciinema.org/a/e3hkjfe2pwna5timt14buxtwh
@@ -26,14 +36,14 @@ usage
    Select files to be edited in Vim from Git repository data
 
    Options:
-   -h, --help              show this help information
-   -s, --staged            Do not include unstaged files
-   -u, --unstaged          Include unstaged files [default]
-   -i, --indexed           Show indexed files only (git ls-files)
-   -1, --last              Show files of last commit
-   -d, --diff              Open selected files with vimdiff
-   --vim=<vim executable>  Use an executable other then `vim`
-   --version               show version information
+   -h, --help      show this help information
+   -s, --staged    Do not include unstaged files
+   -u, --unstaged  Include unstaged files [default]
+   -i, --indexed   Show indexed files only (git ls-files)
+   -1, --last      Show files of last commit
+   -d, --diff      Open selected files with vimdiff
+   -e, --emacs     Open selected files with Emacs
+   --version       show version information
 
 
 install

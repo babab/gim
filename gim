@@ -29,9 +29,10 @@ __version__ = '0.1.0'
 
 
 class Gim:
-    def __init__(self, flags, vim_executable='vim'):
+    vim_executable = 'vim'
+
+    def __init__(self, flags):
         self.flags = flags
-        self.vim_executable = vim_executable
 
     def statuslist(self):
         ls = subprocess.check_output(['git', 'status', '--short']) \
@@ -109,8 +110,6 @@ class ShellCommand(pycommand.CommandBase):
         ('indexed', ('i', False, 'Show indexed files only (git ls-files)')),
         ('last', ('1', False, 'Show files of last commit')),
         ('diff', ('d', False, 'Open selected files with vimdiff')),
-        ('vim', ('', '<vim executable>',
-                 'Use an executable other then `vim`')),
         ('version', ('', False, 'show version information')),
     )
 
@@ -123,7 +122,7 @@ class ShellCommand(pycommand.CommandBase):
                   .format(__version__, sys.version.split()[0]))
             return 0
 
-        self.gim = Gim(self.flags, self.flags.vim or 'vim')
+        self.gim = Gim(self.flags)
 
         print('Gim version {version}, run "gim --help" for more information'
               .format(version=__version__))

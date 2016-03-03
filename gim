@@ -77,13 +77,8 @@ class Gim:
         return ret
 
     def vimargs(self, files):
-        args = None
-
         if self.flags.emacs:
-            args = []
-            for filename in files:
-                cmd = ['emacsclient', '-q', '-n', '-c', filename]
-                args.append(cmd)
+            ret = ['emacsclient', '-q', '-n']
         elif self.flags.diff:
             ret = ['vimdiff']
         else:
@@ -101,9 +96,8 @@ class Gim:
             else:
                 ret = [self.vim_executable, '-p']
 
-        args = args or [ret + files]
-        for i in args:
-            print(green(' '.join(i)))
+        args = ret + files
+        print(green(' '.join(args)))
         return args
 
 
@@ -191,12 +185,11 @@ class ShellCommand(pycommand.CommandBase):
                     pass
 
         if files:
-            for i in self.gim.vimargs(files):
-                try:
-                    subprocess.call(i)
-                except IOError as e:
-                    print(e)
-                    return e.errno
+            try:
+                subprocess.call(self.gim.vimargs(files))
+            except IOError as e:
+                print(e)
+                return e.errno
 
 if __name__ == '__main__':
     try:

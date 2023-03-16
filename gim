@@ -186,10 +186,15 @@ class ShellCommand(pycommand.CommandBase):
 
         if files:
             try:
-                subprocess.call(self.gim.vimargs(files))
+                # Instead of `subprocess.call`, use `os.execvp` to
+                # execute `Gim.vimargs()`, replacing the python process
+                # of gim with the editor process.
+                args = self.gim.vimargs(files)
+                os.execvp(args[0], args)
             except IOError as e:
                 print(e)
                 return e.errno
+
 
 if __name__ == '__main__':
     try:

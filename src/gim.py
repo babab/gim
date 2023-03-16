@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+'''Select files to be edited in Vim from Git repository data'''
 
 # Copyright (c) 2013-2016 Benjamin Althues <benjamin@babab.nl>
 #

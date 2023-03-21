@@ -67,7 +67,7 @@ class Gim:
 
     def last_commit(self):
         files = subprocess.check_output(
-            ['git', 'show', '--format=', '--name-only']
+            ['git', 'show', '--format=', '--name-only', '--no-show-signature']
         ).decode('UTF-8', errors='strict').split('\n')[:-1]
         ret = []
         n = 0

@@ -196,8 +196,18 @@ class ShellCommand(pycommand.CommandBase):
                 return e.errno
 
 
-if __name__ == '__main__':
+def main(argv=sys.argv[1:]):
+    """Main function for the CLI to be used as script (entry point)."""
     try:
-        pycommand.run_and_exit(ShellCommand)
+        cmd = ShellCommand(argv)
+        if cmd.error:
+            print('error: {0}'.format(cmd.error))
+            return 1
+        else:
+            return cmd.run()
     except (KeyboardInterrupt, EOFError):
-        sys.exit(1)
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())
